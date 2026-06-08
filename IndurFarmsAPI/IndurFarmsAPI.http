@@ -1,0 +1,6 @@
+@IndurFarmsAPI_HostAddress = http://localhost:5007
+
+GET {{IndurFarmsAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
