@@ -1,0 +1,14 @@
+﻿namespace IndurFarmsAPI.Models
+{
+    public class Products
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Price { get; set; }
+        public int Stock { get; set; }
+        public string ImageURL { get; set; }
+        public ICollection<CartItems> CartItems {  get; set; } = new List<CartItems>();
+        public ICollection<OrderItems> OrderItems { get; set; } = new List<OrderItems>();
+    }
+}
