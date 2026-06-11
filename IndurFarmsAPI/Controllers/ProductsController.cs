@@ -1,0 +1,56 @@
+﻿using IndurFarmsAPI.DTO_s;
+using IndurFarmsAPI.IServices;
+using IndurFarmsAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+
+namespace IndurFarmsAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductsController : ControllerBase
+    {
+        private readonly IProductsService _productsService;
+        public ProductsController(IProductsService productsService)
+        {
+            _productsService = productsService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            ICollection<ProductsDto> products = await _productsService.GetAllProductsAsync();
+            return Ok(products);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductByIdAsync(int id)
+        {
+            ProductsDto product = await _productsService.GetProductByIdAsync(id);
+            return Ok(product);
+        }
+
+        [HttpPost]
+        [Route("AddProduct")]
+        public async Task<IActionResult> AddProductAsync(ProductsDto product)
+        {
+            await _productsService.AddProductAsync(product);
+            return Ok("Product Added Successfully");
+        }
+
+        [HttpPost]
+        [Route("UpdateProduct/{id}")]
+        public async Task<IActionResult> UpdateProductAsync(int id, ProductsDto productDto)
+        {
+            await _productsService.UpdateProductAsync(id, productDto);
+            return Ok("Product Updated Successfully");
+        }
+
+        [HttpDelete]
+        [Route("DeleteProduct/{id}")]
+        public async Task<IActionResult> DeleteProductAsync(int id)
+        {
+            await _productsService.DeleteProductAsync(id);
+            return Ok("Product Deleted Successfully");
+        }
+    }
+}
