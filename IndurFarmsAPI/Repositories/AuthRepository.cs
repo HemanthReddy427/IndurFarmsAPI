@@ -19,9 +19,9 @@ namespace IndurFarmsAPI.Repositories
         {
             return await _indurFarmsDbContext.Users.ToListAsync();
         }
-        public async Task<Users> GetByEmailAsync(string email)
+        public async Task<Users?> GetByEmailAsync(string email)
         {
-            Users user = await _indurFarmsDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            Users? user = await _indurFarmsDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
             return user!;
             
         }
@@ -42,16 +42,9 @@ namespace IndurFarmsAPI.Repositories
 
         public async Task<bool> DeleteUserAsync(Users user)
         {
-            try
-            {
-                _indurFarmsDbContext.Users.Remove(user);
-                await _indurFarmsDbContext.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                throw new Exception("An exception occured while deleting user");
-            }
+            _indurFarmsDbContext.Users.Remove(user);
+            await _indurFarmsDbContext.SaveChangesAsync();
+            return true;
         }
     }
 }

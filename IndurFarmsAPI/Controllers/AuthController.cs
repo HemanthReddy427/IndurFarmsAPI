@@ -30,15 +30,8 @@ namespace IndurFarmsAPI.Controllers
             {
                 return BadRequest("User name or Password cannot be null");
             }
-            try
-            {
-                string token = await _authService.LoginAsync(loginDto);
-                return Ok(token);
-            }
-            catch(Exception ex) 
-            {
-                return BadRequest(ex.Message);
-            }
+            string token = await _authService.LoginAsync(loginDto);
+            return Ok(token);
         }
 
         [HttpPost]

@@ -1,4 +1,5 @@
-﻿using IndurFarmsAPI.IServices;
+﻿using IndurFarmsAPI.Enums;
+using IndurFarmsAPI.IServices;
 using IndurFarmsAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,7 +22,7 @@ public class JwtService : IJwtService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.ToString())
+            new Claim(ClaimTypes.Role, ((RolesEnum)user.Role).ToString())
         };
 
         var key = new SymmetricSecurityKey(

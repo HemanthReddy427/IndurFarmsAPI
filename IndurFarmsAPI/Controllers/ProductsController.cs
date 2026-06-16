@@ -1,6 +1,6 @@
 ﻿using IndurFarmsAPI.DTO_s;
 using IndurFarmsAPI.IServices;
-using IndurFarmsAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IndurFarmsAPI.Controllers
@@ -30,7 +30,8 @@ namespace IndurFarmsAPI.Controllers
         }
 
         [HttpPost]
-        [Route("AddProduct")]
+        [Authorize(Roles ="Admin")]
+        [Route("Add")]
         public async Task<IActionResult> AddProductAsync(ProductsDto product)
         {
             await _productsService.AddProductAsync(product);
@@ -38,7 +39,8 @@ namespace IndurFarmsAPI.Controllers
         }
 
         [HttpPost]
-        [Route("UpdateProduct/{id}")]
+        [Authorize(Roles = "Admin")]
+        [Route("Update/{id}")]
         public async Task<IActionResult> UpdateProductAsync(int id, ProductsDto productDto)
         {
             await _productsService.UpdateProductAsync(id, productDto);
@@ -46,7 +48,8 @@ namespace IndurFarmsAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteProduct/{id}")]
+        [Authorize(Roles = "Admin")]
+        [Route("Delete/{id}")]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
             await _productsService.DeleteProductAsync(id);
