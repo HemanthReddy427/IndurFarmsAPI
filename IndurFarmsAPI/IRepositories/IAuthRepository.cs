@@ -6,7 +6,7 @@ namespace IndurFarmsAPI.IRepositories
     public interface IAuthRepository
     {
         Task<ICollection<Users>> GetAllUsersAsync();
-        Task<Users> GetByEmailAsync(string email);
+        Task<Users?> GetByEmailAsync(string email);
         Task<Users> RegisterUserAsync(Users user);
         Task<Users> UpdateUserAsync(Users user);
         Task<bool> DeleteUserAsync(Users user);
