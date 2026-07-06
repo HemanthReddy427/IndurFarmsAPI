@@ -10,6 +10,6 @@ namespace IndurFarmsAPI.IServices
         Task<RegisterResponseDto> RegisterUserAsync(RegisterDto registerDto);
         Task<RegisterResponseDto> UpdateUserAsync(RegisterDto registerDto);
         Task<bool> DeleteUserAsync(string email);
-        Task<string> LoginAsync(LoginDto loginDto);
+        Task<LoginResponseDto> LoginAsync(LoginDto loginDto);
     }
 }

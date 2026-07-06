@@ -34,7 +34,10 @@ namespace IndurFarmsAPI.Repositories
 
         public async Task<ICollection<OrderItems>> GetOrderItemsAsync(int orderId)
         {
-            return await _indurFarmsDbContext.OrderItems.Where(ordItem=> ordItem.OrderId == orderId).ToListAsync();
+            return await _indurFarmsDbContext.OrderItems
+                .Include(item => item.Product)
+                .Where(item => item.OrderId == orderId)
+                .ToListAsync();
         }
 
         public async Task<ICollection<Orders>> GetAllOrdersForUser(int userId)
@@ -47,6 +50,17 @@ namespace IndurFarmsAPI.Repositories
         {
             order.OrderStatus = orderStatus;
             await _indurFarmsDbContext.SaveChangesAsync();
+        }
+
+        public async Task<ICollection<Orders>> GetAllOrdersAsync()
+        {
+            ICollection<Orders> orders = await _indurFarmsDbContext.Orders.ToListAsync();
+            return orders;
+        }
+
+        public async Task<Orders?> GetOrderByOrderId(int orderId)
+        {
+            return await _indurFarmsDbContext.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
         }
     }
 }

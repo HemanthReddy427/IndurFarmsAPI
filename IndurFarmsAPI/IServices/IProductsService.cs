@@ -5,8 +5,8 @@ namespace IndurFarmsAPI.IServices
 {
     public interface IProductsService
     {
-        Task<ICollection<ProductsDto>> GetAllProductsAsync();
-        Task<ProductsDto> GetProductByIdAsync(int id);
+        Task<ICollection<ProductsResponseDto>> GetAllProductsAsync();
+        Task<ProductsResponseDto> GetProductByIdAsync(int id);
         Task AddProductAsync(ProductsDto productsDto);
         Task UpdateProductAsync(int id,ProductsDto productDto);
         Task DeleteProductAsync(int id);

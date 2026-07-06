@@ -7,6 +7,6 @@ namespace IndurFarmsAPI.IServices
         Task<ICollection<GetCartItemsDto>> GetUserCartItems();
         Task<GetCartItemsDto> AddToCartAsync(AddToCartDto addToCartDto);
         Task<GetCartItemsDto> UpdateCartProductAsync(GetCartItemsDto getCartItemsDto);
-        Task DeleteProductAsync(GetCartItemsDto getCartItemsDto);
+        Task DeleteProductAsync(int id);
     }
 }

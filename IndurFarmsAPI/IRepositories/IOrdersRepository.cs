@@ -10,5 +10,7 @@ namespace IndurFarmsAPI.IRepositories
         Task<ICollection<Orders>> GetAllOrdersForUser(int userId);
         Task ClearCartAsync(ICollection<CartItems> cartItems);
         Task UpdateOrderStatus(Orders order, int orderStatus);
+        Task<ICollection<Orders>> GetAllOrdersAsync();
+        Task<Orders?> GetOrderByOrderId(int orderId);
     }
 }

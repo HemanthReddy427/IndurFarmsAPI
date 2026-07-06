@@ -13,5 +13,6 @@ namespace IndurFarmsAPI.IRepositories
         Task<CartItems> AddToCartAsync(CartItems cartItem);
         Task<CartItems> UpdateCartItemAsync(CartItems updateItem);
         Task DeleteCartItemAsync(CartItems cartItem);
+        Task<CartItems> GetItemsByCartItemsId(int id);
     }
 }

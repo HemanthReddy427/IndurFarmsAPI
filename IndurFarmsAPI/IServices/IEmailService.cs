@@ -2,6 +2,6 @@
 {
     public interface IEmailService
     {
-        Task SendRegistrationEmail(string email);
+        Task SendWelcomeEmailAsync(string email, string name);
     }
 }

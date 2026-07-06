@@ -43,8 +43,7 @@ namespace IndurFarmsAPI.Controllers
             return Ok(address);
         }
 
-        [HttpPost]
-        [Route("Update")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAddressAsync(int id,CreateAddressDto createAddressDto)
         {
             CurrentUserDto currentUser = await _currentUserService.GetCurrentUserAsync();

@@ -9,21 +9,27 @@ namespace IndurFarmsAPI.Services
     {
         private readonly ICartRepository _cartRepository;
         private readonly ICurrentUserService _currentUserService;
-        public CartService(ICartRepository cartRepository, ICurrentUserService currentUserService) 
+        private readonly IConfiguration _configuration;
+        public CartService(ICartRepository cartRepository, ICurrentUserService currentUserService, IConfiguration configuration) 
         {
             _cartRepository = cartRepository;
             _currentUserService = currentUserService;
+            _configuration = configuration;
         }
 
         public async Task<ICollection<GetCartItemsDto>> GetUserCartItems()
         {
             CurrentUserDto currentUserDto = await _currentUserService.GetCurrentUserAsync();
             ICollection<CartItems> cartItems = await _cartRepository.GetUserCartItemsAsync(currentUserDto.UserId);
-            return cartItems.Select(item=> new GetCartItemsDto
+            return cartItems.Select(item => new GetCartItemsDto
             {
                 Id = item.Id,
                 ProductId = item.ProductId,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
+                ProductName = item.Product.Name,
+                Price = item.Product.Price,
+                ImageUrl = $"{_configuration["Api:BaseUrl"]}{item.Product.ImageURL}",
+                TotalPrice = item.Quantity * item.Product.Price
             }).ToList();
         }
         public async Task<GetCartItemsDto> AddToCartAsync(AddToCartDto cartItems)
@@ -80,10 +86,10 @@ namespace IndurFarmsAPI.Services
             }
         }
 
-        public async Task DeleteProductAsync(GetCartItemsDto getCartItemsDto)
+        public async Task DeleteProductAsync(int id)
         {
             CurrentUserDto currentUserDto = await _currentUserService.GetCurrentUserAsync();
-            CartItems cartItem = await _cartRepository.GetCartItemAsync(currentUserDto.UserId, getCartItemsDto.ProductId);
+            CartItems cartItem = await _cartRepository.GetItemsByCartItemsId(id);
             await _cartRepository.DeleteCartItemAsync(cartItem);
         }
 

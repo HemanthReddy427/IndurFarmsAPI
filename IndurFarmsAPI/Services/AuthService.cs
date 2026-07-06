@@ -1,4 +1,5 @@
-﻿using IndurFarmsAPI.DTO_s;
+﻿using Hangfire;
+using IndurFarmsAPI.DTO_s;
 using IndurFarmsAPI.Enums;
 using IndurFarmsAPI.IRepositories;
 using IndurFarmsAPI.IServices;
@@ -12,10 +13,14 @@ namespace IndurFarmsAPI.Services
     {
         private readonly IAuthRepository _authRepository;
         private readonly IJwtService _jwtService;
-        public AuthService(IAuthRepository authRepository, IJwtService jwtService)
+        private readonly IEmailService _emailService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        public AuthService(IAuthRepository authRepository, IJwtService jwtService, IEmailService emailService, IBackgroundJobClient backgroundJobClient)
         {
             _authRepository = authRepository;
             _jwtService = jwtService;
+            _emailService = emailService;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<ICollection<RegisterResponseDto>> GetAllUsersAsync()
@@ -29,7 +34,7 @@ namespace IndurFarmsAPI.Services
             }).ToList();
             return registerResponseDto;
         }
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
         {
             Users currentUser = await _authRepository.GetByEmailAsync(loginDto.Email);
             if (currentUser == null)
@@ -44,7 +49,14 @@ namespace IndurFarmsAPI.Services
                 throw new Exception("Invalid Credentials");
             }
             string token = _jwtService.GenerateToken(currentUser);
-            return token;
+            return new LoginResponseDto
+            {
+                Token = token,
+                Name = currentUser.Name,
+                Email = currentUser.Email,
+                Role = ((RolesEnum)currentUser.Role).ToString(),
+                UserId = currentUser.Id
+            };
         }
         public async Task<RegisterResponseDto> RegisterUserAsync(RegisterDto registerDto)
         {
@@ -63,6 +75,7 @@ namespace IndurFarmsAPI.Services
                 IsEmailVerified = false,
                 IsPhoneVerified = false
             });
+            _backgroundJobClient.Enqueue<IEmailService>(x => x.SendWelcomeEmailAsync(registerDto.Email, registerDto.Name));
             return new RegisterResponseDto
             {
                 Name = registerDto.Name,

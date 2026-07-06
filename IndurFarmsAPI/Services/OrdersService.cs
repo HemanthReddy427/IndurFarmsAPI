@@ -37,7 +37,7 @@ namespace IndurFarmsAPI.Services
                     throw new Exception("Cart is empty.");
                 }
                 var productIds = userCart.Select(p => p.ProductId).ToList();
-                var products = _indurFarmsDbContext.Products.Where(p => productIds.Contains(p.Id)).ToList();
+                var products = await _indurFarmsDbContext.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
                 decimal total = 0;
                 foreach (var cartItem in userCart)
                 {
@@ -108,9 +108,18 @@ namespace IndurFarmsAPI.Services
             return placeOrderResponseDtos;
         }
 
-        public async Task<ICollection<OrderItems>> GetOrderItemsAsync(int orderId)
+        public async Task<ICollection<OrderItemResponseDto>> GetOrderItemsAsync(int orderId)
         {
-            return await _ordersRepository.GetOrderItemsAsync(orderId);
+            ICollection<OrderItems> orderItems =  await _ordersRepository.GetOrderItemsAsync(orderId);
+            ICollection<OrderItemResponseDto> orderItemResponse = orderItems.Select(ordItem => new OrderItemResponseDto
+            {
+                ProductId = ordItem.ProductId,
+                ProductName = ordItem.Product.Name,
+                ImageUrl = ordItem.Product.ImageURL,
+                Quantity = ordItem.Quantity,
+                Price = ordItem.Price
+            }).ToList();
+            return orderItemResponse;
         }
 
         public async Task CancelOrder(int orderId)
@@ -150,6 +159,17 @@ namespace IndurFarmsAPI.Services
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<ICollection<Orders>> GetOrdersAsync()
+        {
+            return await _ordersRepository.GetAllOrdersAsync();
+        }
+
+        public async Task UpdateOrderStatus(int orderId, int status)
+        {
+            Orders? order = await _ordersRepository.GetOrderByOrderId(orderId);
+            await _ordersRepository.UpdateOrderStatus(order!, status);
         }
     }
 }

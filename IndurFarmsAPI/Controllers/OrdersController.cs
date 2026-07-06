@@ -15,11 +15,11 @@ namespace IndurFarmsAPI.Controllers
             _orderService = orderService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PlaceOrderAsync(int addressId)
+        [HttpPost("PlaceOrder/{addressId}")]
+        public async Task<IActionResult> PlaceOrderAsync([FromRoute]int addressId)
         {
-            await _orderService.PlaceOrderAsync(addressId);
-            return Ok();
+            var response = await _orderService.PlaceOrderAsync(addressId);
+            return Ok(response);
         }
 
         [HttpGet]
@@ -28,17 +28,32 @@ namespace IndurFarmsAPI.Controllers
             return Ok(await _orderService.GetAllUserOrders());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{orderId:int}")]
         public async Task<IActionResult> GetOrderItems([FromRoute]int orderId)
         {
             return Ok(await _orderService.GetOrderItemsAsync(orderId));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{orderId}")]
         public async Task<IActionResult> CancelOrder([FromRoute]int orderId)
         {
             await _orderService.CancelOrder(orderId);
             return Ok("Order cancelled Successfully");
+        }
+
+        [HttpGet("AllOrders")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            return Ok(await _orderService.GetOrdersAsync());
+        }
+
+        [HttpPut("{orderId}/Status/{status}")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> UpdateOrderStatus([FromRoute]int orderId,[FromRoute] int status)
+        {
+            await _orderService.UpdateOrderStatus(orderId, status);
+            return Ok("Order updated successfully");
         }
     }
 }

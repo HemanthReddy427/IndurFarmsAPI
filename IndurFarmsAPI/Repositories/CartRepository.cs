@@ -31,6 +31,12 @@ namespace IndurFarmsAPI.Repositories
             return cartItem;
         }
 
+        public async Task<CartItems> GetItemsByCartItemsId(int id)
+        {
+            CartItems? cartItem = await _indurFarmsDbContext.CartItems.FirstOrDefaultAsync(c=>c.Id == id);
+            return cartItem;
+        }
+
         public async Task<CartItems> GetCartItemAsync(int? userId, int productId)
         {
             CartItems? cartItem = await _indurFarmsDbContext.CartItems
@@ -53,7 +59,11 @@ namespace IndurFarmsAPI.Repositories
 
         public async Task<ICollection<CartItems>> GetUserCartItemsAsync(int? userId)
         {
-            ICollection<CartItems> cartItems = await _indurFarmsDbContext.CartItems.Where(ci=>ci.Cart.UserId == userId).ToListAsync();
+            ICollection<CartItems> cartItems = await _indurFarmsDbContext.CartItems
+                .Include(ci => ci.Product)
+                .Include(ci => ci.Cart)
+                .Where(ci => ci.Cart.UserId == userId)
+                .ToListAsync();
             return cartItems;
         }
 

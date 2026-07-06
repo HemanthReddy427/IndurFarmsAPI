@@ -32,7 +32,7 @@ namespace IndurFarmsAPI.Controllers
             return Ok(getCartItemsDto);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("UpdateItem")]
         public async Task<IActionResult> UpdateCartItemAsync(GetCartItemsDto getCartItemsDto)
         {
@@ -40,11 +40,10 @@ namespace IndurFarmsAPI.Controllers
             return Ok(getUpdatedItem);
         }
 
-        [HttpDelete]
-        [Route("DeleteItem")]
-        public async Task<IActionResult> DeleteProductAsync(GetCartItemsDto getCartItemsDto)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProductAsync(int id)
         {
-            await _cartService.DeleteProductAsync(getCartItemsDto);
+            await _cartService.DeleteProductAsync(id);
             return Ok("Product Deleted Successfullt");
         }
     }

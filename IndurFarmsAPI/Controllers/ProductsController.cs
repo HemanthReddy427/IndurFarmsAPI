@@ -18,21 +18,21 @@ namespace IndurFarmsAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            ICollection<ProductsDto> products = await _productsService.GetAllProductsAsync();
+            ICollection<ProductsResponseDto> products = await _productsService.GetAllProductsAsync();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductByIdAsync(int id)
         {
-            ProductsDto product = await _productsService.GetProductByIdAsync(id);
+            ProductsResponseDto product = await _productsService.GetProductByIdAsync(id);
             return Ok(product);
         }
 
         [HttpPost]
         [Authorize(Roles ="Admin")]
         [Route("Add")]
-        public async Task<IActionResult> AddProductAsync(ProductsDto product)
+        public async Task<IActionResult> AddProductAsync([FromForm]ProductsDto product)
         {
             await _productsService.AddProductAsync(product);
             return Ok("Product Added Successfully");
