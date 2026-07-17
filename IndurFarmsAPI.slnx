@@ -3,5 +3,5 @@
     <File Path=".dockerignore" />
     <File Path="Dockerfile" />
   </Folder>
-  <Project Path="IndurFarmsAPI/IndurFarmsAPI.csproj" />
+  <Project Path="IndurFarmsAPI.csproj" />
 </Solution>
