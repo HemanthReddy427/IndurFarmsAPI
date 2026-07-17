@@ -1,3 +1,7 @@
 <Solution>
-  <Project Path="IndurFarmsAPI/IndurFarmsAPI.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path="Dockerfile" />
+  </Folder>
+  <Project Path="IndurFarmsAPI.csproj" />
 </Solution>
