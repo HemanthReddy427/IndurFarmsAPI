@@ -10,6 +10,7 @@ namespace IndurFarmsAPI.Services
         private readonly IProductsRepository _productsRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _configuration;
+        private readonly IImageStorageService _imageStorageService;
         public ProductsService(IProductsRepository productsRepository, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _productsRepository = productsRepository;
@@ -37,15 +38,26 @@ namespace IndurFarmsAPI.Services
             {
                 throw new Exception("Product cannot be empty");
             }
-            string imagePath = await SaveImageAsync(productDto.Image);
-            await _productsRepository.AddProductAsync(new Products
+            // Upload first, so ImageURL holds the blob's public URL
+            string imageUrl = await _imageStorageService.UploadAsync(productDto.Image);
+
+            try
             {
-                Name = productDto.Name,
-                Description = productDto.Description,
-                Price = productDto.Price,
-                Stock= productDto.Stock,
-                ImageURL = imagePath
-            });
+                await _productsRepository.AddProductAsync(new Products
+                {
+                    Name = productDto.Name,
+                    Description = productDto.Description,
+                    Price = productDto.Price,
+                    Stock = productDto.Stock,
+                    ImageURL = imageUrl
+                });
+            }
+            catch
+            {
+                // DB save failed: don't leave an orphaned image in storage
+                await _imageStorageService.DeleteAsync(imageUrl);
+                throw;
+            }
         }
 
         public async Task UpdateProductAsync(int id,ProductsDto productDto)
