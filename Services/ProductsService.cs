@@ -11,11 +11,12 @@ namespace IndurFarmsAPI.Services
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _configuration;
         private readonly IImageStorageService _imageStorageService;
-        public ProductsService(IProductsRepository productsRepository, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
+        public ProductsService(IProductsRepository productsRepository, IWebHostEnvironment webHostEnvironment, IConfiguration configuration, IImageStorageService imageStorageService)
         {
             _productsRepository = productsRepository;
             _webHostEnvironment = webHostEnvironment;
             _configuration = configuration;
+            _imageStorageService = imageStorageService;
         }
 
         public async Task<ICollection<ProductsResponseDto>> GetAllProductsAsync()
