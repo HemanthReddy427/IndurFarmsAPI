@@ -28,7 +28,7 @@ namespace IndurFarmsAPI.Services
                 Description = p.Description,
                 Price = p.Price,
                 Stock = p.Stock,
-                ImageUrl = $"{_configuration["Api:BaseUrl"]}{p.ImageURL}"
+                ImageUrl = p.ImageURL
             }).ToList();
         }
 
@@ -95,7 +95,7 @@ namespace IndurFarmsAPI.Services
                 Description = product.Description,
                 Price = product.Price,
                 Stock = product.Stock,
-                ImageUrl = $"{_configuration["Api:BaseUrl"]}{product.ImageURL}"
+                ImageUrl = product.ImageURL
             };
             return productsDto;
         }
