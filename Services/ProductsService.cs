@@ -2,6 +2,7 @@
 using IndurFarmsAPI.IRepositories;
 using IndurFarmsAPI.IServices;
 using IndurFarmsAPI.Models;
+using Serilog;
 
 namespace IndurFarmsAPI.Services
 {
@@ -17,6 +18,7 @@ namespace IndurFarmsAPI.Services
             _webHostEnvironment = webHostEnvironment;
             _configuration = configuration;
             _imageStorageService = imageStorageService;
+            Log.Information("ProductsService created. Image storage assigned: {Assigned}", _imageStorageService != null);
         }
 
         public async Task<ICollection<ProductsResponseDto>> GetAllProductsAsync()
