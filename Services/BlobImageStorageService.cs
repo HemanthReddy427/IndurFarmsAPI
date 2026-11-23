@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace IndurFarmsAPI.Services; // adjust namespace
 
@@ -44,31 +45,63 @@ public class BlobImageStorageService : IImageStorageService
         _container = service.GetBlobContainerClient(containerName);
     }
 
-    public async Task<string> UploadAsync(IFormFile file, string folder = "products", CancellationToken ct = default)
+    public async Task<string> UploadAsync(
+    IFormFile file,
+    string folder = "products",
+    CancellationToken ct = default)
     {
-        if (file == null || file.Length == 0)
+        Log.Information("STEP 1: UploadAsync entered");
+
+        if (file == null)
+        {
+            Log.Error("STEP 2: Uploaded file is NULL");
             throw new ArgumentException("Image is required.");
+        }
+
+        Log.Information("STEP 2: File received. Length: {Length}", file.Length);
+
+        if (file.Length == 0)
+            throw new ArgumentException("Image is empty.");
 
         if (file.Length > MaxBytes)
-            throw new ArgumentException("Image must be 5 MB or smaller.");
+            throw new ArgumentException("Image exceeds 5 MB.");
+
+        Log.Information("STEP 3: File validation passed");
 
         var extension = Path.GetExtension(file.FileName);
-        if (!AllowedTypes.TryGetValue(extension, out var contentType))
-            throw new ArgumentException("Only JPG, PNG and WebP images are allowed.");
 
-        // Random name: avoids overwrites and never trusts the user's file name.
+        Log.Information("STEP 4: File extension: {Extension}", extension);
+
+        if (!AllowedTypes.TryGetValue(extension, out var contentType))
+            throw new ArgumentException("Unsupported image format.");
+
+        Log.Information("STEP 5: Image format validated");
+
+        Log.Information(
+            "STEP 6: Container initialized: {Initialized}",
+            _container != null
+        );
+
         var blobName = $"{folder}/{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
+
         var blob = _container.GetBlobClient(blobName);
 
+        Log.Information("STEP 7: Blob client created");
+
         await using var stream = file.OpenReadStream();
+
+        Log.Information("STEP 8: File stream opened");
+
         await blob.UploadAsync(stream, new BlobUploadOptions
         {
             HttpHeaders = new BlobHttpHeaders
             {
                 ContentType = contentType,
-                CacheControl = "public, max-age=31536000" // names are unique, so cache for a year
+                CacheControl = "public, max-age=31536000"
             }
         }, ct);
+
+        Log.Information("STEP 9: Blob uploaded successfully");
 
         return blob.Uri.ToString();
     }
