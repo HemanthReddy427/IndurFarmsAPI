@@ -41,8 +41,43 @@ namespace IndurFarmsAPI.Services
             {
                 throw new Exception("Product cannot be empty");
             }
-            // Upload first, so ImageURL holds the blob's public URL
-            string imageUrl = await _imageStorageService.UploadAsync(productDto.Image);
+
+            Log.Information("AddProductAsync started");
+
+            Log.Information(
+                "ImageStorageService is null: {IsNull}",
+                _imageStorageService == null
+            );
+
+            Log.Information(
+                "Product image is null: {IsNull}",
+                productDto.Image == null
+            );
+
+            Log.Information(
+                "Product image length: {Length}",
+                productDto.Image?.Length ?? 0
+            );
+
+            if (_imageStorageService == null)
+            {
+                throw new InvalidOperationException(
+                    "ImageStorageService was not injected"
+                );
+            }
+
+            if (productDto.Image == null || productDto.Image.Length == 0)
+            {
+                throw new InvalidOperationException(
+                    "Product image is missing"
+                );
+            }
+
+            string imageUrl = await _imageStorageService.UploadAsync(
+                productDto.Image
+            );
+
+            Log.Information("Image uploaded successfully: {ImageUrl}", imageUrl);
 
             try
             {
@@ -57,7 +92,6 @@ namespace IndurFarmsAPI.Services
             }
             catch
             {
-                // DB save failed: don't leave an orphaned image in storage
                 await _imageStorageService.DeleteAsync(imageUrl);
                 throw;
             }
